@@ -14,6 +14,9 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 #compiler stuff
 IF(MSVC)
   ADD_DEFINITIONS (/D  _CRT_SECURE_NO_WARNINGS)  ## add macro
+  ADD_DEFINITIONS (/D  NOMINMAX)  ## add macro
+
+  
  # ADD_DEFINITIONS (/D  _SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING )
   #ADD_DEFINITIONS (/D   GLEW_STATIC ) ## use static glew library
   #ADD_DEFINITIONS (/D   GLFW_INCLUDE_NONE ) ## use static glew library

@@ -25,6 +25,13 @@ namespace CGL {
                 data_[coord] = rh.data_[coord];
             }
         }
+        Vector(const Vector& rh) {
+            for (unsigned coord = 0; coord < DIM; coord++) {
+                data_[coord] = rh.data_[coord];
+            }
+        }
+
+
 		//Vector(Vector* rhs)
 		const FT& x() const { return data_[0]; }
 		const FT& y() const { return data_[1]; }
@@ -360,6 +367,103 @@ namespace CGL {
         ) {
         return Vector<3,T>(T(s) * v.x, T(s) * v.y, T(s) * v.z);
     }
+
+
+
+    template <class T>
+    class Vector<4, T> {
+    public:
+        static const unsigned dim = 4;
+        using  vector_type = Vector<4, T>;
+        using value_type = T;
+        Vector() : x(0), y(0), z(0),w(0) { }
+        Vector(T x_in, T y_in, T z_in, T w_in) :x(x_in), y(y_in), z(z_in),w(w_in) {}
+        template <class T2>
+        explicit Vector(const Vector<dim, T2>& v) :x(v.x), y(v.y), z(v.z),w(v.w) {}
+        template <class T2>
+        explicit Vector(const T2* v) :x(v[0]), y(v[1]), z(v[2]),w(v[3]) {}
+        inline T length2() const { return x * x + y * y + z * z+w*w; }
+        inline T length() const { return sqrt(x * x + y * y + z * z+w*w); }
+        inline T distance2(const vector_type& v) const {
+            T dx = v.x - x;
+            T dy = v.y - y;
+            T dz = v.z - z;
+            T dw = v.w - w;
+            return dx * dx + dy * dy + dz * dz+dw*dw;
+        }
+        inline T distance(const vector_type& v) const {
+            return sqrt(distance2(v));
+        }
+        inline vector_type& operator+= (const vector_type& v) {
+            x += v.x;
+            y += v.y;
+            z += v.z;
+            w += v.w;
+            return *this;
+        }
+        inline vector_type& operator-= (const vector_type& v) {
+            x -= v.x;
+            y -= v.y;
+            z -= v.z;
+            w -= v.w;
+            return *this;
+        }
+        template <class T2>
+        inline vector_type& operator*= (T2 s) {
+            x *= T(s);
+            y *= T(s);
+            z *= T(s);
+            w *= T(s);
+            return *this;
+        }
+        template <class T2>
+        inline vector_type& operator/= (T2 s) {
+            x /= T(s);
+            y /= T(s);
+            z /= T(s);
+            w /= T(s);
+            return *this;
+        }
+        inline vector_type operator+ (const vector_type& v) const {
+            return vector_type(x + v.x, y + v.y, z + v.z, w+v.w);
+        }
+        inline vector_type operator- (const vector_type& v) const {
+            return vector_type(x - v.x, y - v.y, z - v.z, w-v.w);
+        }
+        template <class T2>
+        inline vector_type operator* (T2 s) const {
+            return vector_type(x * T(s), y * T(s), z * T(s), w*T(s));
+        }
+        template <class T2>
+        inline vector_type operator/ (T2 s) const {
+            return vector_type(x / T(s), y / T(s), z / T(s),w/T(s));
+        }
+       inline vector_type operator- () const {
+            return vector_type(-x, -y, -z,-w);
+        }
+        unsigned dimension() const {
+            return dim;
+        }
+        T* data() { return &x; }
+
+        const T* data() const { return &x; }
+        inline T& operator[] (unsigned i) {
+            return data()[i];
+        }
+        inline const T& operator[] (unsigned i) const {
+            return data()[i];
+        }
+        T x, y, z,w;
+    };
+
+
+
+
+
+
+
+
+
 
     using vec2 = Vector<2, float>;
     using ivec2 = Vector<2, int>;

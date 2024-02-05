@@ -5,6 +5,7 @@
 #include<framebuffer.h>
 #include<cglpipeline.h>
 #include<program.h>
+#include<mesh.h>
 namespace CGL {
 	class Rasterizer final {
 	public:
@@ -27,16 +28,35 @@ namespace CGL {
 				m_cur_framebuffer->CColorBuffer[3 * x + 2] = color.b;
 			}
 		}
+		std::vector<VertexData> homogeneous_clipping(VertexData& v0, VertexData& v1, VertexData& v2, float near, float far);
+
+		std::vector<VertexData> homogeneous_clipping_fast_aux(VertexData& v0, VertexData& v1, VertexData& v2, float near, float far);
+		std::vector<VertexData> homogeneous_clipping_SutherlandHodgeman_aux(VertexData& v0, VertexData& v1, VertexData& v2, float near, float far);
+
+		std::vector<VertexData> Rasterizer::clipingSutherlandHodgemanAux(
+			const std::vector<VertexData>& polygon,
+			const int& axis,
+			const int& side);
+
+		bool depth_test(int x, int y, float new_depth, int screen_width, int screen_height);
+
+
 		void set_up_vertex_array(std::vector<float>& vertices, std::vector<unsigned>& triangles);
 		void set_up_vertex_array(std::vector<float>& vertices,std::vector<float>&color, std::vector<unsigned>& triangles);
-
+		void set_up_vertex_array(std::vector<vec3>& vertices, std::vector<int>& triangles);
+		void set_up_vertex_array(Mesh* msh);
 
 		void draw_by_index(int p_count = 0);
 		void draw_triangle_barycentric_aux(VertexData& v0, VertexData& v1, VertexData& v2, int screen_width, int screen_height);
 
 		void set_viewport(int x, int y, int height, int width);
-		std::shared_ptr<CFramebuffer> m_cur_framebuffer;
+		void cgl_look_at(const vec3& eye, const vec3& center, const vec3& up);
+		void cgl_perspective(float fovy, float aspect, float near, float far);
 
+		void cgl_orth(float left, float right, float bottom, float top, float near, float far);
+
+
+		std::shared_ptr<CFramebuffer> m_cur_framebuffer;
 		std::shared_ptr<Program> m_current_program;
 		mat4 m_md_mat;
 		mat4 m_v_mat;
@@ -47,10 +67,10 @@ namespace CGL {
 		std::vector<unsigned> m_index_buffer;
 		std::vector<FragmentData> m_frag_buffer;
 	private:
+		int m_init_render_state = 0b00000001;// nothing is enabled;
 		int m_width;
 		int m_height;
-		Color color;
-
+		Color color;   
 	};
 
 
